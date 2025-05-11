@@ -37,7 +37,7 @@ def print_banner():
     print("=" * 80)
 
 def str_to_key(s):
-    """Преобразует 7-байтовую строку в 8-байтовый DES-ключ"""
+    #Преобразование 7-байтовой строки в 8-байтовый DES-ключ
     key = []
     key.append(s[0] >> 1)
     key.append(((s[0] & 0x01) << 6) | (s[1] >> 2))
@@ -52,7 +52,7 @@ def str_to_key(s):
     return bytes(key)
 
 def challenge_response(challenge, hash, debug=False):
-    """Генерирует NT Response для MS-CHAPv2"""
+    #Генерирация NT Response 
     if isinstance(hash, str):
         hash = bytes.fromhex(hash)
     
@@ -81,13 +81,13 @@ def challenge_response(challenge, hash, debug=False):
     return res
 
 def calc_challenge(peer_chal, auth_chal, username):
-    """Вычисляет challenge для MS-CHAPv2"""
+    #Вычисление challenge 
     sha = hashlib.sha1()
     sha.update(peer_chal + auth_chal + username.encode('utf-8'))
     return sha.digest()[:8]
 
 def crack_mschap(nt_challenge, nt_response, wordlist_path, username):
-    """Основная функция для взлома MS-CHAPv2"""
+    #Брутфорс паролей
     if not os.path.exists(wordlist_path):
         print(f"[-] Ошибка: Файл словаря {wordlist_path} не найден")
         return None
@@ -111,7 +111,7 @@ def crack_mschap(nt_challenge, nt_response, wordlist_path, username):
     
     start_time = datetime.now()
     for i, password in enumerate(passwords, 1):
-        if i % 1000 == 0:  # Показываем прогресс каждые 1000 паролей
+        if i % 1000 == 0:  # Прогресс каждые 1000 паролей
             print(f"[*] Проверено паролей: {i}/{len(passwords)}")
         
         nthash = compute_nthash(password)
